@@ -2,17 +2,12 @@ import csv
 import logging
 import json
 import os
+from logtidueToCity import convert_lat_long_to_city, get_conn
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-maxiMum = 1000
 
-UNLIMITED = "unlimited"
-LIMITED = "limited"
-GEOINFO = True
-
-sourFilePath = "/Volumes/Xing Wenpeng/weibo/2019-12.csv"
-nameForSaving = "/full2019-12Geoinfo.json"
 
 #nameForSaving = "/first{}Output2020-01GeoInfo.json".format(maxiMum)
 #nameForSaving = "/first{}Output2020-03.json".format(maxiMum)
@@ -92,11 +87,17 @@ def main():
 
 
 
-    contentInCsv = csvLoader(sourFilePath, maxiMum, UNLIMITED, GEOINFO)
+    #contentInCsv = csvLoader(sourFilePath, maxiMum, UNLIMITED, GEOINFO)
 
-    saveDicToJson(contentInCsv, nameForSaving)
+    #saveDicToJson(contentInCsv, nameForSaving)
 
     #loadJsonToDict("/Users/xingwenpeng/PycharmProjects/nlp/Output/first1000Output2020-01.json")
+
+
+
+
+
+    convert_lat_long_to_city(get_conn, lat, long)
 
 
 
