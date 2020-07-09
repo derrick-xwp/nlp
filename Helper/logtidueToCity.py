@@ -30,15 +30,14 @@ def update_city_info(dict, start, total, core_number, myDict, lock):
         if i == 0:
             i = i + 1
             continue
-        logger.info("%s 线程, 进度： %s", start, n/(total/core_number)*100)
         dicData = dict.get(str(int(i)))
-
         i = i+1
         n = n + 1
         long, lat = dicData.get('geo_info').split(",")
         city = convert_lat_long_to_city(conn, long, lat)
         dicData["city"] = city
         dicUpdated.append(dicData)
+    logger.info("%s 线程, 进度： %s", start, n)
     lock.acquire()
     myDict.extend(dicUpdated)
     lock.release()
@@ -57,8 +56,6 @@ def convert_lat_long_to_city(conn, long, lat):
     try:
         dict = json.loads(data.decode("utf-8"))
     except json.decoder.JSONDecodeError as e:
-        logger.error(e)
-        print(str(lat), str(long), "Null")
         return "Null"
 
     city = dict.get('result').get('addressComponent').get('city')
