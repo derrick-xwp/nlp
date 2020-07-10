@@ -10,10 +10,6 @@ logging.basicConfig(level=logging.INFO)
 
 def get_conn():
 
-
-
-    logger.info("Get connection for api: api.map.baidu.com")
-
     conn = http.client.HTTPConnection("api.map.baidu.com")
 
     return conn
