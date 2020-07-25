@@ -39,6 +39,32 @@ def update_city_info(dict, start, total, core_number, myDict, lock):
     lock.release()
     conn.close()
 
+
+def update_city_info_normal(dict, total):
+
+    logger.info("start update city info without mp")
+    conn = get_conn()
+    dicUpdated = []
+    n = 0
+    i = 0
+    while (i <= total):
+        if i == 0:
+            i = i + 1
+            continue
+        dicData = dict.get(str(int(i)))
+        i = i+1
+        n = n + 1
+        long, lat = dicData.get('geo_info').split(",")
+        city = convert_lat_long_to_city(conn, long, lat)
+        dicData["city"] = city
+        dicUpdated.append(dicData)
+
+    conn.close()
+    return dicUpdated
+
+
+
+
 def retry_if_result_none(result):
     return result is "Null"
 
