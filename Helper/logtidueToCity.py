@@ -33,6 +33,7 @@ def update_city_info(dict, start, total, core_number, myDict, lock):
         city = convert_lat_long_to_city(conn, long, lat)
         dicData["city"] = city
         dicUpdated.append(dicData)
+
     logger.info("%s 线程, 进度： %s", start, n)
     lock.acquire()
     myDict.extend(dicUpdated)
@@ -47,7 +48,7 @@ def update_city_info_normal(dict, total):
     dicUpdated = []
     n = 0
     i = 0
-    while (i <= total):
+    while (i < total):
         if i == 0:
             i = i + 1
             continue
@@ -55,7 +56,16 @@ def update_city_info_normal(dict, total):
         i = i+1
         n = n + 1
         long, lat = dicData.get('geo_info').split(",")
-        city = convert_lat_long_to_city(conn, long, lat)
+        print(long, lat)
+        print(i)
+        try:
+            city = convert_lat_long_to_city(conn, long, lat)
+        except :
+            logger.info("retry error")
+            dicData["city"] = None
+            dicUpdated.append(dicData)
+            continue
+
         dicData["city"] = city
         dicUpdated.append(dicData)
 
@@ -68,7 +78,7 @@ def update_city_info_normal(dict, total):
 def retry_if_result_none(result):
     return result is "Null"
 
-@retry(retry_on_result=retry_if_result_none, stop_max_attempt_number=4)
+@retry(retry_on_result=retry_if_result_none, stop_max_attempt_number=40)
 def convert_lat_long_to_city(conn, long, lat):
 
     url = "/geocoder?output=json&location={},{}&key=1qwNjPIb8UmwZdA7owlopzgjNI0Sov7j".format(str(lat), str(long))

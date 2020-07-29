@@ -1,3 +1,4 @@
+from check import check_json_rows_number
 from cleaner import clean_each_line, clean
 from fileLoader import saveDicToJson, csvLoader, loadJsonToDict, save_dict_to_csv, save_list_to_json, split
 
@@ -34,12 +35,12 @@ def main():
     #进行去除没有地理信息的
     contentInCsv = csvLoader(sourFilePath, maxiMum, UNLIMITED, GEOINFO)
     saveDicToJson(contentInCsv, nameForSaving)
-    """
 
+    """
     #进行城市信息更新
-    path_for_json ="/Users/xingwenpeng/PycharmProjects/nlp/Output/2020-02-02-02Geoinfo.json"
-    path_to_save_csv = "/Users/xingwenpeng/PycharmProjects/nlp/Output/2020-02-02-02CityInfo.csv"
-    path_to_save_json = "/Users/xingwenpeng/PycharmProjects/nlp/Output/2020-02-02-02CityInfo.json"
+    path_for_json ="/Users/xingwenpeng/PycharmProjects/nlp/Output/2020-02-03Geoinfo.json"
+    path_to_save_csv = "/Users/xingwenpeng/PycharmProjects/nlp/Output/2020-02-03CityInfo.csv"
+    path_to_save_json = "/Users/xingwenpeng/PycharmProjects/nlp/Output/2020-02-03CityInfo.json"
     dicData = loadJsonToDict(path_for_json)
     total = len(dicData)
 
@@ -50,8 +51,8 @@ def main():
     save_dict_to_csv(updated_dict, path_to_save_csv)
     save_list_to_json(updated_dict, path_to_save_json)
     logger.info("The total number of info is %s", total)
-    """
 
+    """
     #进行拆分
     path_for_json = "/Users/xingwenpeng/PycharmProjects/nlp/Output/2020-02-02Geoinfo.json"
     path_to_save_csv_1 = "/Users/xingwenpeng/PycharmProjects/nlp/Output/2020-02-02-01Geoinfo.csv"
@@ -78,8 +79,12 @@ def main():
     save_dict_to_csv(updated_dict, path_to_save_csv)
     save_list_to_json(updated_dict, path_to_save_json)
     #line = "#2019MMA#日本老头儿都是秋名山车神吧？❤开车无一例外都那么猛！�叮～按时长大  我一没喝多的下了车都快飘了！！@武汉红十字基金会 晕死！！！[开心] 日本·东京 显示地图"
-    """
 
+    path_for_json_city = "/Users/xingwenpeng/PycharmProjects/nlp/Output/2020-03-03Cityinfo.json"
+    path_for_json_geo = "/Users/xingwenpeng/PycharmProjects/nlp/Output/2020-03-03Geoinfo.json"
+    check_json_rows_number(path_for_json_city)
+    check_json_rows_number(path_for_json_geo)
+    """
 
 
 if __name__ == "__main__":
