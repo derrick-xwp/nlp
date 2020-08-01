@@ -47,8 +47,13 @@ def csvLoader(path, maxiMum, mode, GEOINFO):
     return contentInCsv
 
 
-def save_list_to_json(dict, path):
-    logger.info("Start saving files to json, the size is %s", len(dict))
+def save_list_to_json(dict, sub_dir, name):
+    dir = os.path.abspath(os.path.join(os.getcwd(), "..")) + "/" + sub_dir + "/"
+    if not os.path.exists(dir):
+        logger.info("Creating dir %s", dir)
+        os.makedirs(dir)
+    logger.info("Start saving list to json, the size is %s", len(dict))
+    path = dir + name + '.json'
     with open(path, "w") as f:
         ouput = {}
         count = 0
@@ -59,14 +64,41 @@ def save_list_to_json(dict, path):
 
 
 
-def save_dict_to_csv(dict, path):
+def save_dict_to_csv(dict_list, sub_dir, name):
+    dir = os.path.abspath(os.path.join(os.getcwd(), "..")) + "/" + sub_dir + "/"
+    if not os.path.exists(dir):
+        logger.info("Creating dir %s", dir)
+        os.makedirs(dir)
+    logger.info("Start saving dict to csv, the size is %s", len(dict_list))
+    path = dir + name + ".csv"
+    f = codecs.open(path, 'w', 'utf_8_sig')
+    writer = csv.writer(f)
+    flag = True
+    count = 0
+    for item in dict_list:
+        if flag:
+            keys = item.keys()
+            writer.writerow(keys)
+            flag = False
+        else:
+            writer.writerow(list(item.values()))
+        count = count + 1
+    logger.info("Finish saving files to csv, the size is %s", count)
+    f.close()
+
+def save_dict_to_csv_for_cleaning(dict,sub_dir, name):
+    dir = os.path.abspath(os.path.join(os.getcwd(), "..")) + "/" + sub_dir
+    if not os.path.exists(dir):
+        logger.info("Creating dir %s", dir)
+        os.makedirs(dir)
     logger.info("Start saving files to csv, the size is %s", len(dict))
+    path = dir + name
     f = codecs.open(path, 'w', 'utf_8_sig')
     writer = csv.writer(f)
     flag = True
     for item in dict:
         if flag:
-            keys = ['geo_info', '_id', 'user_id', 'crawl_time', 'created_at', 'like_num','repost_num', 'comment_num', 'content', 'origin_weibo', 'city']
+            keys = ['geo_info', '_id', 'user_id', 'crawl_time', 'created_at', 'like_num','repost_num', 'comment_num', 'content', 'origin_weibo', 'city', 'emotion', '##', 'at']
             writer.writerow(keys)
             flag = False
         else:
@@ -74,7 +106,7 @@ def save_dict_to_csv(dict, path):
     f.close()
 
 
-def saveDicToJson(sourceFile, name):
+def saveDicToJson(sourceFile, name, sub_dir):
 
     logger.info("Start saving to Json: %s ", name)
     ouput = {}
@@ -82,7 +114,7 @@ def saveDicToJson(sourceFile, name):
     for row in sourceFile:
         ouput[count] = row
         count = count+1
-    dir = os.path.abspath(os.path.join(os.getcwd(), "..")) + "/Output"
+    dir = os.path.abspath(os.path.join(os.getcwd(), "..")) + "/" + sub_dir
     if not os.path.exists(dir):
         logger.info("Creating dir %s", dir)
         os.makedirs(dir)
@@ -95,7 +127,7 @@ def saveDicToJson(sourceFile, name):
         logger.error(e)
 
 def loadJsonToDict(path):
-    logger.info("Start transfering json file")
+    logger.info("Start loading json file %s", path)
     with open(path, 'r', encoding='utf8')as fp:
         dictData = json.load(fp)
         return dictData
@@ -147,22 +179,47 @@ def split(path):
     return dict_1, dict_2, dict_3
 
 
+def convert_json_to_csv(path_to_json, sub_dir, name):
+    dict_file = loadJsonToDict(path_to_json)
+    dict_list = []
+    max = len(dict_file)
+    count = 0
+    while count <= max:
+        line = dict_file.get(str(count))
+        if line == None:
+            break
+
+        dict_list.append(line)
+
+        count = count + 1
+
+    save_dict_to_csv(dict_list, sub_dir, name)
 
 
 
 
 
+def combine_multiple_to_one(files_list, sub_dir, name):
 
 
-    #contentInCsv = csvLoader(sourFilePath, maxiMum, UNLIMITED, GEOINFO)
+    dic_data = []
+    for path in files_list:
+        logger.info("start combining %s into the combo %s", path, name)
+        dict_file = loadJsonToDict(path)
+        max = len(dict_file)
+        count = 0
+        while count <= max:
+            line = dict_file.get(str(count))
+            if line == None:
+                break
+            dic_data.append(line)
+            count = count + 1
+    logger.info("Finish combining all %s files, the size of the combo is %s", len(files_list), len(dic_data))
+    logger.info("Start saving combo %s", name)
+    save_list_to_json(dic_data, sub_dir, name)
 
-    #saveDicToJson(contentInCsv, nameForSaving)
 
-    #loadJsonToDict("/Users/xingwenpeng/PycharmProjects/nlp/Output/first1000Output2020-01.json")
-
-
-
-    #convert_lat_long_to_city(get_conn, lat, long)
+    return dic_data
 
 
 
